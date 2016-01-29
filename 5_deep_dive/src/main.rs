@@ -81,13 +81,81 @@ fn main() {
     //Using a return as the last line of a function works, but is considered poor style: <--- Straight from the Learn Rust book.  I would like to take a moment to
     //say fuck you.
 
-    fn diverges() {
-        panic!("This function never returns!");
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    //**********************************************************************************************************************************************************\\
+    //************************************************************PRIMITIVE TYPES*******************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    // 1) Booleans  x: bool = true;               Typical booleans true and false.
+    // 2) char      x = 'x';   x = '💕';           This type must be created with one quote not "" double quotes.  Its one Unicode scalar value only.
+    fn print_char(x:char){ //Note even though bindings of char are prefered to be implicit let y = 'y' you must still explicitly define as a function argument
+        //let y:char = "y"; breaks because "" is used
+        //let y:char = 'y'; //can explicity define :char but unessacary
+        let y = 'y';        //The prefered method of defining a char type.
+        println!("{} {}",x,y);
     }
+    print_char('x');
+    // 3) Integer - Holy shit this got complicated quickly compared to JavaSript and Ruby.
+        //The u types can only hold positive numbers, never negative numbers so they hold twice as many possible numbers for the same memory space
+        //The i types can hold positive and negative numbers but because of that only accept half the possibilities.
+        //Rust default is typically i32 as that range will reasonably hold just about any number you are actually likely to use.
 
-    diverges();
+        // A) i8    -128 to 127
+        // B) i16   -32,768 to 32,767
+        // C) i32   -2,147,483,648 to 2,147,483,647
+        // D) i64   -18,446,744,073,709,551,616 to 18,446,744,073,709,551,615
+        // E) u8    0 to 255
+        // F) u16   0 to 32,767
+        // G) u32   0 to 4,294,967,295
+        // H) u64   0 to 18,446,744,073,709,551,615
+        // I) isize Either i32 or i64, depending on your system's pointer size
+        // J) usize Either u32 or u64, depending on your system's pointer size.
+        // K) f32   Gives 6-9 significant digits of precision.  Saves memory but kiled some people on an airplane once because of rounding error >_<
+        // L) f64   Gives 15-17 digits of precision and is over a million times more accurate.  Hasn't killed people as far as I can tell.  Use this one always.
 
+    // 4) Array  let mut m = [1,2,3] - Arrays in rust are immutable by default and have to have mut called if you intend to use it as a changing container
+        //arrays in rust must contain the same type and are a fixed size.  If you say it holds 3 objects, it will always hold only 3 objects.
+    let a = [1,2,3];
+    println!("{}",a[1]);
+    //You can create a x digit array filled with zeroes with let mut a = [0:X]
 
+    // 5) Slices - New to Rust slices are a reference to a section of another already created thing (array is the thing we have learned about it can be from)
+       //Slices take on the form of &name_of_thing[]
+    let a = [0,1,2,3,4];
+    let _slice_entire_array = &a[..];
+    let _slice_portion_of_array = &a[1..4];
+
+    // 6) str - circle back on this after learning about references and unsized types as it seems its never really used semicolon.
+        //for now just know that if you want to pass a string as an arugment its type should be &str
+
+    // 7) tuples - an ordered list of fixed size using () as the container (commonly seen as the arguments to a function). Can take multiple types in same tuple
+    let _x: (i32, &str) = (1, "hello");  //explicitly set type
+    let _y = (2, "world");               //let rust implicity determine the type
+        //The tuple can be used to assigned multple variables in a single let statement
+    let (_x,_y,_z) = (1,2,3);
+    println!("x is {}",x);
+        //If you want to create a single item tuple you must put a comma after it, otherwise rust will interpret it as an object in parenthesis
+        //let single_element_tuple = (0,);
+        //let zero_in_parenthesis = (0 + 1);
+        //You can accesss the parts of a tuple using dot notations and the array like position of the argument
+    let tuple = (1,2,3);
+    let first_argument = tuple.0;
+    let second_argument = tuple.1;
+    println!("first is {} and second is {}",first_argument,second_argument);
+
+    // 8) Functions themselves can be a type when creating a binding
+    fn foo(x:i32){
+        println!("{}",x);
+    }
+    //The type of variable x is a function, accepting 1 argument itself with a type of i32 and value of x is the function we created earlier called foo
+    let x: fn(i32) = foo;
+    //Now we can call foo directory or we can call x which takes the argument and calls foo
+    x(9);
+    foo(9);
+    
     //**********************************************************************************************************************************************************\\
     //**********************************************************************************************************************************************************\\
     //**********************************************************************************************************************************************************\\
