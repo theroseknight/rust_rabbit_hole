@@ -1,0 +1,6 @@
+[package]
+name = "deep_dive"
+version = "0.1.0"
+authors = ["theroseknight <daniel.j.x.bryant@gmail.com>"]
+
+[dependencies]
