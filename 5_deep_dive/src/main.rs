@@ -155,7 +155,194 @@ fn main() {
     //Now we can call foo directory or we can call x which takes the argument and calls foo
     x(9);
     foo(9);
-    
+
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    //**********************************************************************************************************************************************************\\
+    //*******************************************************************COMMENTS*******************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    // // Obviously starts the typical rust comment
+    // /// Is a special comment started for use in online documentation that allows you to use markdown inside the comment like ```Code```
+    // //! is the final type of comment that is used commonly in documentation for crates or modules to comment out library names or functions
+
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    //**********************************************************************************************************************************************************\\
+    //****************************************************************IF STATEMENTS*****************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    // Rust's if statement is very reminiscent of javascript except no () around the statement being evaluated and uses else if like ruby instead of elsif
+    let x = 5;
+
+    if x == 5 {
+        println!("x is five!");
+    } else if x == 6 {
+        println!("x is six!");
+    } else {
+        println!("x is not five or six :(");
+    }
+
+    // The one new thing about if statements is that you can use them to assign a value to a binding.
+    let y = if x == 5 { 10 } else { 15 };
+    println!("{}",y); //will print 10, the value returned by the if statement on the right hand side of y's binding.
+
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************Loops*******************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    // Rust has three looping keywords: loop, while, and for
+    let mut x = 0;
+    // First up is the infinite loop.  This will cause the code inside it to execute forever unless you break out of it with the keyword break.
+    // If you plan to loop forever (as long as the program is running) ALWAYS use loop not while true because loop is optimized differently from while true
+    loop {
+        x += 1;
+        if x < 5 {
+            println!("X is currently {}",x);
+        }else{
+            break;
+        }
+    }
+
+    // Secondly we have while that will continue to execute as long as some argument passed to it is still evaluated to true. Never use for infinite loop
+    let mut x = 0;
+    let mut stopper = false;
+
+    while stopper == false {
+        x += 1;
+        println!("X is currently {}",x);
+        if x > 3 {
+            stopper = true;
+        }
+    }
+
+    // The final loop is the for loop working exactly like Ruby. It will execute however many times you pass it giving you the binding name as the iteration number
+    for x in 0..10 {
+        println!("{}",x)
+    }
+
+    // You can pass the index of the iteration in to the loop by using tuples and calling the .enumerate() function on the range tuple.  Strangley Rust has decided
+    // that the first binding will be the index (i in my code below is 0 and j is 5) while the second binding will be the iterator.
+    for (i,j) in (5..10).enumerate() {
+        println!("i = {} and j = {}", i, j);
+    }
+
+    // Rust has several important key words that can be used with loops.
+    // 1) break - just like Ruby this will crash the loop immediatly and continue the program after the loop
+    // 2) return - explicitly defining a return will cause the loop to terminate immediatley
+    // 3) continue - continue will cause the current iteration of the loop to stop and move on to the next iteration.  Perfect for 'only every odd or even scenarios'
+
+    // This strange ' syntax allows you to label the specific loop so that you can break or continue a loop from inside of another nested loop by passing a label to
+    // the keyword call.  Without these labels any keyword will apply to the innermost loop only.
+    'outer: for x in 0..4 {
+        'inner: for y in 0..4 {
+            // This loop only prints when x and y are both odd by ending the iteration of each when they are not odd
+            if x % 2 == 0 { continue 'outer; } // continues the loop over x
+            if y % 2 == 0 { continue 'inner; } // continues the loop over y
+            println!("x: {}, y: {}", x, y);
+        }
+    }
+
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    //**********************************************************************************************************************************************************\\
+    //********************************************************Ownership - Borrowing - Lifetimes*****************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    // Ownership DOES NOT APPLY TO PRIMITIVE TYPES.  ALL OF THE THINGS LEARNED ABOVE implement the 'trait'(learned later) Copy which defeats this behavior.
+    // This means the following code WILL compile and run
+
+    let v = 1; //i32 is a primitive type learned above
+
+    let v2 = v;
+
+    println!("v is: {}", v);
+    println!("v2 is: {}",v2);
+
+    // The following code WILL NOT compile and run
+
+    let v = vec![1,2,3];
+
+    let v2 = v;
+
+    // println!("v[0] is: {}",v[0]);
+    // but this will
+    println!("v2[0] is: {}",v2[0]);
+
+    // In the first example v passes ownership of 1 to v2 but 1 is an i32 primitive type which has the trait Copy so both v and v2 can access 1
+    // In th esecond example v passes ownership of vec![1,2,3] to v2 which is a vector type with no traits and ONLY v2 can access that vector unless we explicitly
+    // return ownership of the vec! to v or give it a trait of Copy ourselves.
+
+    fn foo_two(v1: Vec<i32>, v2: Vec<i32>) -> (Vec<i32>, Vec<i32>, i32) {
+        // do stuff with v1 and v2
+        // hand back ownership, and the result of our function
+        (v1, v2, 42)
+    }
+
+    let v1 = vec![1, 2, 3];
+    let v2 = vec![1, 2, 3];
+
+    let (_v1, v2, _answer) = foo_two(v1, v2);
+
+    println!("We can access v2 because we passed ownership back: {}",v2[0]);
+
+    fn foo_three(v1: Vec<i32>, v2: Vec<i32>) -> i32 {
+        println!("I'm from inner v1: {} and I'm from inner v2 {}:",v1[0],v2[0]);
+        // hand back the result of our function
+        42
+    }
+
+    let v1 = vec![1, 2, 3];
+    let v2 = vec![1, 2, 3];
+
+    let answer = foo_three(v1, v2);
+
+    println!("We can access answer but v1 or v2 will throw errors since they were never passed back: {}",answer);
+    // println!("We can access answer but v1 or v2 will throw errors since they were never passed back: {}",v1[0]);
+
+    // Instead of having to manually pass back every variable like the first example above you can create a reference instead using the syntat &binding_name
+
+    fn foo_four(v1: &Vec<i32>, v2: &Vec<i32>) -> i32 {
+        println!("I'm from inner v1: {} and I'm from inner v2 {}:",v1[0],v2[0]);
+        // hand back the result of our function
+        42
+    }
+
+    let v1 = vec![1, 2, 3];
+    let v2 = vec![1, 2, 3];
+
+    let _answer = foo_four(&v1, &v2);
+    println!("We can access answer AND v1 or v2 because only a reference to the data was passed to the fucntion, not the data: {}",v1[0]);
+
+    // Both the functions arguments being passed in AND the declaration of those arguments when creating the function must be identified as references
+
+    // By default a reference CAN NOT be mutated. Even if the underlying binding is mutable, a reference to it can be mutated.
+
+    // You can create a mutable rerfence with the syntax &mut binding_name but it comes with a series of special syntax rules that must be followed
+
+    // 1) The mutated reference and any subsequent mutations using it must be created 1 layer of scope deeper than object being referenced.
+
+    let mut x = 5;
+    {
+       let y = &mut x;
+       *y += 1;
+    }
+    println!("{}", x);
+
+
+
+
+
     //**********************************************************************************************************************************************************\\
     //**********************************************************************************************************************************************************\\
     //**********************************************************************************************************************************************************\\
