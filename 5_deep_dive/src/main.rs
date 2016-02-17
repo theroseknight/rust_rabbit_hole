@@ -389,12 +389,30 @@ fn main() {
         y: i32,
     }
 
-    let mut point = PointInSpace {x:0, y:0};
+    let mut point = PointInSpace {x:0, y:0};  // Note that x and y are mutable because of let mut point, let point would prevent x and y from ever changing
 
     point.x = 5;
     point.y = 10;
 
     println!("The point is x:{} and y:{}",point.x,point.y);
+
+    // You can auto set the values of a new struct instance to the values of another created struct by the using the syntax .. struct_name
+
+    let mut new_point = PointInSpace {x:0,..point};
+    // The above will take any attributes not explicitly defined(all but x) and fill out their values with the values from point
+    // The only value not defined is y and point.y = 10 so new_point.y will also equal 10
+    println!("The point is x:{} and y:{}",new_point.x,new_point.y);
+
+
+
+
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+    //**********************************************************************************************************************************************************\\
+
+    //**********************************************************************************************************************************************************\\
+    //*******************************************************************Enums**********************************************************************************\\
+    //**********************************************************************************************************************************************************\\
 
 
 
